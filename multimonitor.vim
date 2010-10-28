@@ -1,6 +1,29 @@
+" multimonitor.vim: better support for vim on two monitors 
 "
-" To use this tool, source it
-" 
+"
+" Author: Bernt R. Brenna
+"
+"
+" Instructions
+" ============
+"
+" On your left monitor, start vim with servername LEFT and source the
+" script:
+"
+" $ vim --servername LEFT
+" :source multimonitor.vim
+"
+" On your right monitor, start vim with servername RIGHT and source the
+" script:
+"
+" $ vim --servername RIGHT
+" :source multimonitor.vim
+"
+" When vim detects an existing swap file owned by another process, it fires
+" the SwapExists autocmd that calls a function (Swap_Exists) that will
+" communicate with the other instance and instruct it to open the file (using
+" the Remote_Open function).
+"
 
 function! s:other_server(raiseerror)
     if v:servername == "LEFT"
@@ -21,17 +44,21 @@ echo "This is " . v:servername . ", other server is " . other
 sleep
 
 function! Remote_Open(filename, command)
-    echom "I was told to open " . a:filename
-    echom "command: " . a:command
+    " This function is called by the other vim instance
+    echom "Remote_Open.filename: " . a:filename
+    echom "Remote_Open.command: " . a:command
+
     execute "edit " . a:filename
     redraw
+
     execute command
-    sleep
-    return "OK"
+    redraw
+
+    return "Server " . v:servername . " opened file " . a:filename
 endfunction
 
-function! Swap_Exists(filename)
-    echo "Swap file found for " . a:filename . " attempting open on other server."
+function! Swap_Exists()
+    echo "Swap file found for " . expand("<afile>") . ", attempting open on other server."
     sleep
 
     let other_server = s:other_server(1)
@@ -43,6 +70,5 @@ function! Swap_Exists(filename)
     let v:swapchoice = "q"
 endfunction
 
-autocmd! BufReadPre *
-autocmd! SwapExists
-autocmd SwapExists * call Swap_Exists(expand("%"))
+autocmd! SwapExists *
+autocmd SwapExists * call Swap_Exists()
