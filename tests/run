@@ -1,22 +1,4 @@
 #! /usr/bin/env bash
 
-. testlib
-
-# setup
-trap kill_jobs EXIT
-ensure_no_vimservers
-start_vim_servers LEFT RIGHT
-sleep 1
-
-# given
-open_vim LEFT myfile.txt
-open_vim_tab LEFT myotherfile.txt
-open_vim RIGHT myfile.txt
-
-# then
-[[ `current_file_name RIGHT` == "" ]] || fail $LINENO
-buffer_is_loaded RIGHT myfile.txt && fail $LINENO
-
-[[ `current_file_name LEFT` == "myfile.txt" ]] || fail $LINENO
-buffer_is_loaded LEFT myfile.txt || fail $LINENO
-
+./test_two_monitors
+./test_three_monitors

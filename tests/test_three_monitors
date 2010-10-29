@@ -1,0 +1,26 @@
+#! /usr/bin/env bash
+
+. testlib
+
+# setup
+trap kill_jobs EXIT
+ensure_no_vimservers
+start_vim_servers LEFT RIGHT MIDDLE
+sleep 1
+
+# given
+open_vim LEFT myfile.txt
+open_vim_tab LEFT filefour.txt 
+open_vim RIGHT myotherfile.txt
+open_vim MIDDLE thirdfile.txt
+
+[[ `current_file_name LEFT` == "filefour.txt" ]] || fail $LINENO
+
+# when
+open_vim MIDDLE myfile.txt
+
+# then
+[[ `current_file_name MIDDLE` == "thirdfile.txt" ]] || fail $LINENO
+[[ `current_file_name LEFT` == "myfile.txt" ]] || fail $LINENO
+
+wait_for_input
