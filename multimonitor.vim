@@ -40,9 +40,6 @@ function! s:other_server(raiseerror)
     endif
 endfunction
 
-let other = s:other_server(0)
-echo "This is " . v:servername . ", other server is " . other
-sleep
 
 function! Remote_Open(filename, command)
     " This function is called by the other vim instance
@@ -58,18 +55,21 @@ function! Remote_Open(filename, command)
     return "Server " . v:servername . " opened file " . a:filename
 endfunction
 
+
 function! Swap_Exists()
-    echo "Swap file found for " . expand("<afile>") . ", attempting open on other server."
-    sleep
+    echom "Swap file found for " . expand("<afile>") . ", attempting open on other server."
 
     let other_server = s:other_server(1)
     let swapcommand = substitute(v:swapcommand, "\r", "", "g")
     let remexpr = 'Remote_Open("' . expand("<afile>") . '", "' . swapcommand . '")'
 
-    echo remote_expr(other_server, remexpr)
-    sleep
+    echom remote_expr(other_server, remexpr)
+
     let v:swapchoice = "q"
 endfunction
 
+
 autocmd! SwapExists *
 autocmd SwapExists * call Swap_Exists()
+
+echom "This is " . v:servername . ", other server is " . s:other_server(0)

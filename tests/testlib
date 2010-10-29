@@ -1,0 +1,50 @@
+function ensure_no_vimservers() {
+    if [[ `vim --serverlist | wc -l` != '0' ]]; then echo ERROR: VIM servers running; exit 1; fi
+}
+
+function start_vim_servers() {
+    for name in $*
+    do
+        xterm -e vim -S ../multimonitor.vim --servername $name &
+    done
+}
+
+function open_vim() {
+    vim --servername $1 --remote $2
+    sleep 0.1
+}
+
+function open_vim_tab() {
+    vim --servername $1 --remote-tab $2
+    sleep 0.1
+}
+
+function kill_jobs() {
+    jobs -l | awk '{ print $2 }' | xargs kill
+}
+
+function buffer_is_loaded() {
+    CMD="vim --servername $1 --remote-expr bufloaded('$2')"
+    if [[ `$CMD` == "0" ]]
+    then
+        return 1
+    else
+        return 0
+    fi
+}
+
+function current_file_name() {
+    CMD="vim --servername $1 --remote-expr expand('%')"
+    $CMD
+}
+
+function fail() {
+    echo FAIL $*
+    exit 1
+}
+
+
+function wait_for_input() {
+    echo Enter continues
+    read key
+}
