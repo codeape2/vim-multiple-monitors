@@ -22,5 +22,3 @@ open_vim MIDDLE myfile.txt
 # then
 [[ `current_file_name MIDDLE` == "thirdfile.txt" ]] || fail $LINENO
 [[ `current_file_name LEFT` == "myfile.txt" ]] || fail $LINENO
-
-wait_for_input

@@ -8,20 +8,23 @@ Author: Bernt R. Brenna
 Instructions
 ============
 
-On your left monitor, start vim with servername LEFT and source the
-script:
+Start a number of vim servers and source the script:
 
 $ vim --servername LEFT
 :source multimonitor.vim
-
-On your right monitor, start vim with servername RIGHT and source the
-script:
-
 $ vim --servername RIGHT
+:source multimonitor.vim
+$ vim --servername MIDDLE
 :source multimonitor.vim
 
 When vim detects an existing swap file owned by another process, it fires
 the SwapExists autocmd that calls a function (Swap_Exists) that will
-communicate with the other instance and instruct it to open the file (using
-the Remote_Open function).
+communicates with the other instances and instructs the owning instance to
+open the file (using the Remote_Open function).
+
+Running the test suite
+======================
+
+$ cd tests
+$ ./run
 
