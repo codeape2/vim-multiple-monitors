@@ -6,7 +6,6 @@
 trap kill_jobs EXIT
 ensure_no_vimservers
 start_vim_servers LEFT RIGHT
-sleep 1
 
 # given
 open_vim LEFT myfile.txt
