@@ -1,5 +1,5 @@
 "
-" multimonitor.vim: better support for vim on two monitors 
+" multimonitor.vim: better support for vim on two monitors
 "
 "
 " Author: Bernt R. Brenna
@@ -49,7 +49,7 @@ function! s:servers()
 endfunction
 
 
-function! s:other_servers() 
+function! s:other_servers()
     return filter(s:servers(), 'v:val != "' . v:servername . '"')
 endfunction
 
