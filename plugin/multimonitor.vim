@@ -19,12 +19,14 @@ function! Do_You_Own(filename)
     return bufloaded(a:filename)
 endfunction
 
+let s:in_remote_open = 0
 
 function! Remote_Open(filename, command)
     " This function is called by the other vim instance
     echom "Remote_Open.filename: " . a:filename
     echom "Remote_Open.command: " . a:command
 
+    let s:in_remote_open = 1
     execute "edit " . a:filename
     redraw
 
@@ -35,12 +37,18 @@ function! Remote_Open(filename, command)
     echom "Taking focus"
     call foreground()
 
+    let s:in_remote_open = 1
     return "Server " . v:servername . " opened file " . a:filename
 endfunction
 
 
 function! Swap_Exists()
     echom "Swap file found for " . expand("<afile>") . ", attempting open on other server."
+
+    if s:in_remote_open == "1"
+        echom "Skipping recursive swap-exists"
+        return
+    endif
 
     let owning_server = ""
     for server in s:other_servers()
