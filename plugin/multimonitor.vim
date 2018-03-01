@@ -5,21 +5,6 @@
 " Author: Bernt R. Brenna
 "
 
-function! s:other_server(raiseerror)
-    if v:servername == "LEFT"
-        return "RIGHT"
-    elseif v:servername == "RIGHT"
-        return "LEFT"
-    else
-        if a:raiseerror
-            throw "Servername is '" . v:servername . "', expected LEFT or RIGHT"
-        else
-            return ""
-        endif
-    endif
-endfunction
-
-
 function! s:servers()
     return split(serverlist(), "\n")
 endfunction
