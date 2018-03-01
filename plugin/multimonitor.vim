@@ -20,6 +20,7 @@ function! Do_You_Own(filename)
 endfunction
 
 let s:in_remote_open = 0
+let s:buffer_to_cleanup = ""
 
 function! Remote_Open(filename, command)
     " This function is called by the other vim instance
@@ -41,6 +42,13 @@ function! Remote_Open(filename, command)
     return "Server " . v:servername . " opened file " . a:filename
 endfunction
 
+function! Buf_Enter()
+    if s:buffer_to_cleanup != ""
+        echom "Cleaning up " . s:buffer_to_cleanup
+        execute "bdelete " . s:buffer_to_cleanup
+        let s:buffer_to_cleanup = ""
+    endif
+endfunction
 
 function! Swap_Exists()
     echom "Swap file found for " . expand("<afile>") . ", attempting open on other server."
@@ -63,10 +71,14 @@ function! Swap_Exists()
 
     echom remote_expr(owning_server, remexpr)
 
+    " Cleanup the buffer to avoid dangling entries
+    let s:buffer_to_cleanup = expand("<afile>")
+
     let v:swapchoice = "q"
 endfunction
 
 augroup MultiMonitorVim
 autocmd!
+autocmd BufEnter * call Buf_Enter()
 autocmd SwapExists * call Swap_Exists()
 augroup END
