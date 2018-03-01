@@ -93,10 +93,5 @@ function! Swap_Exists()
     let v:swapchoice = "q"
 endfunction
 
-
-command! Identify echom "This is " . v:servername . ", other servers: " . join(s:other_servers())
-
 autocmd! SwapExists *
 autocmd SwapExists * call Swap_Exists()
-
-Identify
