@@ -1,32 +1,8 @@
 "
-" multimonitor.vim: better support for vim on two monitors
+" multimonitor.vim: better support for vim on multiple monitors
 "
 "
 " Author: Bernt R. Brenna
-"
-"
-" Instructions
-" ============
-"
-" Start a number of vim servers and source the script:
-"
-" $ vim --servername LEFT
-" :source multimonitor.vim
-" $ vim --servername RIGHT
-" :source multimonitor.vim
-" $ vim --servername MIDDLE
-" :source multimonitor.vim
-"
-" When vim detects an existing swap file owned by another process, it fires
-" the SwapExists autocmd that calls a function (Swap_Exists) that will
-" communicates with the other instances and instructs the owning instance to
-" open the file (using the Remote_Open function).
-"
-" Running the test suite
-" ======================
-"
-" $ cd tests
-" $ ./run
 "
 
 function! s:other_server(raiseerror)
