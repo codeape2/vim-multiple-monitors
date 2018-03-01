@@ -58,5 +58,7 @@ function! Swap_Exists()
     let v:swapchoice = "q"
 endfunction
 
-autocmd! SwapExists *
+augroup MultiMonitorVim
+autocmd!
 autocmd SwapExists * call Swap_Exists()
+augroup END
