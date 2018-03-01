@@ -70,6 +70,10 @@ function! Remote_Open(filename, command)
     execute command
     redraw
 
+    " Take focus on the new window
+    echom "Taking focus"
+    call foreground()
+
     return "Server " . v:servername . " opened file " . a:filename
 endfunction
 
