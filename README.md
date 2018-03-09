@@ -9,7 +9,7 @@ Installation
 ============
 
 * [vim-plug](https://github.com/junegunn/vim-plug)
- *  `Plug 'lostgoat/vim-multiple-monitors'`
+ *  `Plug 'codeape2/vim-multiple-monitors'`
 
 Similar instructions should also work for other plugin managers.
 
