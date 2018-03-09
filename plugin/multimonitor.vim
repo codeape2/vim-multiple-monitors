@@ -1,55 +1,16 @@
 "
-" multimonitor.vim: better support for vim on two monitors 
+" multimonitor.vim: better support for vim on multiple monitors
 "
 "
 " Author: Bernt R. Brenna
 "
-"
-" Instructions
-" ============
-"
-" Start a number of vim servers and source the script:
-"
-" $ vim --servername LEFT
-" :source multimonitor.vim
-" $ vim --servername RIGHT
-" :source multimonitor.vim
-" $ vim --servername MIDDLE
-" :source multimonitor.vim
-"
-" When vim detects an existing swap file owned by another process, it fires
-" the SwapExists autocmd that calls a function (Swap_Exists) that will
-" communicates with the other instances and instructs the owning instance to
-" open the file (using the Remote_Open function).
-"
-" Running the test suite
-" ======================
-"
-" $ cd tests
-" $ ./run
-"
-
-function! s:other_server(raiseerror)
-    if v:servername == "LEFT"
-        return "RIGHT"
-    elseif v:servername == "RIGHT"
-        return "LEFT"
-    else
-        if a:raiseerror
-            throw "Servername is '" . v:servername . "', expected LEFT or RIGHT"
-        else
-            return ""
-        endif
-    endif
-endfunction
-
 
 function! s:servers()
     return split(serverlist(), "\n")
 endfunction
 
 
-function! s:other_servers() 
+function! s:other_servers()
     return filter(s:servers(), 'v:val != "' . v:servername . '"')
 endfunction
 
@@ -58,24 +19,44 @@ function! Do_You_Own(filename)
     return bufloaded(a:filename)
 endfunction
 
+let s:in_remote_open = 0
+let s:buffer_to_cleanup = ""
 
 function! Remote_Open(filename, command)
     " This function is called by the other vim instance
     echom "Remote_Open.filename: " . a:filename
     echom "Remote_Open.command: " . a:command
 
+    let s:in_remote_open = 1
     execute "edit " . a:filename
     redraw
 
     execute command
     redraw
 
+    " Take focus on the new window
+    echom "Taking focus"
+    call foreground()
+
+    let s:in_remote_open = 1
     return "Server " . v:servername . " opened file " . a:filename
 endfunction
 
+function! Buf_Enter()
+    if s:buffer_to_cleanup != ""
+        echom "Cleaning up " . s:buffer_to_cleanup
+        execute "bdelete " . s:buffer_to_cleanup
+        let s:buffer_to_cleanup = ""
+    endif
+endfunction
 
 function! Swap_Exists()
     echom "Swap file found for " . expand("<afile>") . ", attempting open on other server."
+
+    if s:in_remote_open == "1"
+        echom "Skipping recursive swap-exists"
+        return
+    endif
 
     let owning_server = ""
     for server in s:other_servers()
@@ -90,13 +71,14 @@ function! Swap_Exists()
 
     echom remote_expr(owning_server, remexpr)
 
+    " Cleanup the buffer to avoid dangling entries
+    let s:buffer_to_cleanup = expand("<afile>")
+
     let v:swapchoice = "q"
 endfunction
 
-
-command! Identify echom "This is " . v:servername . ", other servers: " . join(s:other_servers())
-
-autocmd! SwapExists *
+augroup MultiMonitorVim
+autocmd!
+autocmd BufEnter * call Buf_Enter()
 autocmd SwapExists * call Swap_Exists()
-
-Identify
+augroup END

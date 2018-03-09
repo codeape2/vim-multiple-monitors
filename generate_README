@@ -1,3 +1,0 @@
-#! /usr/bin/env bash
-
-sed -n '/^"/p' multimonitor.vim | cut -c 3- > README
