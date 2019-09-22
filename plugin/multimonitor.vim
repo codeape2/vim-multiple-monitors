@@ -36,7 +36,9 @@ function! Remote_Open(filename, command)
 
     " Take focus on the new window
     echom "Taking focus"
-    call foreground()
+    if !has('win32')
+        call foreground()
+    endif 
 
     let s:in_remote_open = 1
     return "Server " . v:servername . " opened file " . a:filename
@@ -70,7 +72,9 @@ function! Swap_Exists()
     let remexpr = 'Remote_Open("' . expand("<afile>") . '", "' . swapcommand . '")'
 
     echom remote_expr(owning_server, remexpr)
-
+    if has('win32') 
+        call remote_foreground(owning_server)
+    endif 
     " Cleanup the buffer to avoid dangling entries
     let s:buffer_to_cleanup = expand("<afile>")
 
