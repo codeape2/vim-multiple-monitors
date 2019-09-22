@@ -71,10 +71,11 @@ function! Swap_Exists()
     let swapcommand = substitute(v:swapcommand, "\r", "", "g")
     let remexpr = 'Remote_Open("' . expand("<afile>") . '", "' . swapcommand . '")'
 
-    echom remote_expr(owning_server, remexpr)
     if has('win32') 
         call remote_foreground(owning_server)
     endif 
+
+    echom remote_expr(owning_server, remexpr)
     " Cleanup the buffer to avoid dangling entries
     let s:buffer_to_cleanup = expand("<afile>")
 
