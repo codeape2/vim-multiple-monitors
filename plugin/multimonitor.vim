@@ -16,6 +16,7 @@ endfunction
 
 
 function! Do_You_Own(filename)
+    echom "Request for " . a:filename
     return bufloaded(a:filename)
 endfunction
 
@@ -40,13 +41,14 @@ function! Remote_Open(filename, command)
         call foreground()
     endif 
 
-    let s:in_remote_open = 1
+    let s:in_remote_open = 0
     return "Server " . v:servername . " opened file " . a:filename
 endfunction
 
 function! Buf_Enter()
     if s:buffer_to_cleanup != ""
         echom "Cleaning up " . s:buffer_to_cleanup
+        bp
         execute "bdelete " . s:buffer_to_cleanup
         let s:buffer_to_cleanup = ""
     endif
@@ -62,14 +64,14 @@ function! Swap_Exists()
 
     let owning_server = ""
     for server in s:other_servers()
-        if remote_expr(server, 'Do_You_Own("' . expand("<afile>") . '")') != "0"
+        if remote_expr(server, "Do_You_Own('" . expand("<afile>") . "')") != "0"
             let owning_server = server
             break
         endif
     endfor
 
     let swapcommand = substitute(v:swapcommand, "\r", "", "g")
-    let remexpr = 'Remote_Open("' . expand("<afile>") . '", "' . swapcommand . '")'
+    let remexpr = "Remote_Open('" . expand("<afile>") . "', '" . swapcommand . "')"
 
     if has('win32') 
         call remote_foreground(owning_server)
