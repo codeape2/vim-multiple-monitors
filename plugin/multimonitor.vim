@@ -16,7 +16,6 @@ endfunction
 
 
 function! Do_You_Own(filename)
-    echom "Request for " . a:filename
     return bufloaded(a:filename)
 endfunction
 
