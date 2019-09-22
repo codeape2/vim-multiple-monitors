@@ -36,9 +36,8 @@ function! Remote_Open(filename, command)
 
     " Take focus on the new window
     echom "Taking focus"
-    if !has('win32')
-        call foreground()
-    endif 
+    call foreground()
+ 
 
     let s:in_remote_open = 0
     return "Server " . v:servername . " opened file " . a:filename
