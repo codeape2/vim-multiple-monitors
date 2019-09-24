@@ -5,7 +5,7 @@ function ensure_no_vimservers() {
 function start_vim_servers() {
     for name in $*
     do
-        xterm -e vim -S ../multimonitor.vim --servername $name &
+        xterm -e vim -S ../plugin/multimonitor.vim --servername $name &
     done
     sleep 1
 }
