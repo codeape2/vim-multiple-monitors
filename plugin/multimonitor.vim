@@ -68,6 +68,19 @@ function! Swap_Exists()
         endif
     endfor
 
+    " If finding the server fails, abort this process. 
+    " The swap file may legitimately need to be recovered, but this lets
+    " the user get control of what happens with the swap file.
+    " This shouldn't happen unless a bug preserves a swap file, or Vim is
+    " forcibly closed as a result of an OS-level halt. For an instance, if the
+    " computer randomly decides to update while there's unsaved files, if
+    " there's a power outage or the computer otherwise loses power, or if
+    " there's an accident that causes Vim to be force closed in a way that
+    " doesn't properly handle buffers and clear swap files. 
+    if owning_server == ""
+        return
+    endif
+
     let swapcommand = substitute(v:swapcommand, "\r", "", "g")
     let remexpr = "Remote_Open('" . expand("<afile>") . "', '" . swapcommand . "')"
 
